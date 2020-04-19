@@ -8,8 +8,8 @@ router.post("/create", (req, res, next) => {
   new Project({
     title: req.body.title,
     description: req.body.description,
-    likes: 0,
-    dislikes: 0,
+    likes,
+    dislikes,
     totalDifference: likes - dislikes,
   }).save((err, doc) => {
     if (!err) {

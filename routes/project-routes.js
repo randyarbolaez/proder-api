@@ -30,9 +30,10 @@ router.get("/projects", (req, res, next) => {
 });
 
 router.put("/update/:id", (req, res, next) => {
-  Project.findByIdAndUpdate(req.params.id, req.body)
+  let body = req.body;
+  Project.findByIdAndUpdate(req.params.id, body)
     .then((updatedProject) => {
-      res.json(updatedProject);
+      res.json({ updatedProject, body });
     })
     .catch((err) => {
       res.json(err);

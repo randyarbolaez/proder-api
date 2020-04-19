@@ -4,12 +4,13 @@ const router = express.Router();
 const Project = require("../models/project-schema");
 
 router.post("/create", (req, res, next) => {
+  let { likes, dislikes } = req.body;
   new Project({
     title: req.body.title,
     description: req.body.description,
     likes: 0,
     dislikes: 0,
-    totalDifference: 0,
+    totalDifference: likes - dislikes,
   }).save((err, doc) => {
     if (!err) {
       res.json(doc);

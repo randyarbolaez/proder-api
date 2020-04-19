@@ -32,7 +32,7 @@ router.get("/projects", (req, res, next) => {
 router.put("/update/:id", (req, res, next) => {
   Project.findByIdAndUpdate(req.params.id, req.body)
     .then((updatedProject) => {
-      res.json(req.body);
+      res.json(updatedProject);
     })
     .catch((err) => {
       res.json(err);

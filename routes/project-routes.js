@@ -4,7 +4,6 @@ const router = express.Router();
 const Project = require("../models/project-schema");
 
 router.post("/create", (req, res, next) => {
-  let { likes, dislikes } = req.body;
   new Project({
     title: req.body.title,
     description: req.body.description,

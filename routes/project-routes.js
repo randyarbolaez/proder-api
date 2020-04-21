@@ -10,7 +10,7 @@ router.post("/create", (req, res, next) => {
     description: req.body.description,
     likes,
     dislikes,
-    totalDifference: likes - dislikes,
+    totalDifference: 0,
   }).save((err, doc) => {
     if (!err) {
       res.json(doc);

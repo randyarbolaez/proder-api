@@ -35,6 +35,8 @@ app.use(cors());
 //Route
 const projectRoutes = require("./routes/project-routes");
 app.use("/project", projectRoutes);
+const messageRoutes = require("./routes/message-routes");
+app.use("/message", messageRoutes);
 //Route
 
 app.listen(process.env.PORT || 8080, () => {

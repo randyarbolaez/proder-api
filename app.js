@@ -5,6 +5,12 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
+const http = require("http");
+const socketIo = require("socket.io");
+
+const server = http.createServer(app);
+
+const Message = require("./models/message-schema");
 
 // DB Setup
 mongoose.Promise = Promise;
@@ -39,7 +45,35 @@ const messageRoutes = require("./routes/message-routes");
 app.use("/message", messageRoutes);
 //Route
 
-app.listen(process.env.PORT || 8080, () => {
+const io = socketIo(server); // < Interesting!
+
+let interval;
+
+io.on("connection", (socket) => {
+  console.log("New client connected");
+  if (interval) {
+    clearInterval(interval);
+  }
+  interval = setInterval(() => getApiAndEmit(socket), 1000);
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+    clearInterval(interval);
+  });
+});
+
+let getApiAndEmit = (socket) => {
+  console.log("SOCKET", socket);
+  // Emitting a new message. Will be consumed by the client
+  Message.find()
+    .then((messages) => {
+      socket.emit("FromAPI", messages);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+server.listen(process.env.PORT || 8080, () => {
   console.log(`Listening on http://localhost:${process.env.PORT}`);
 });
 

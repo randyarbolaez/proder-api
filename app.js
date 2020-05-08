@@ -37,7 +37,7 @@ app.use(
   })
 );
 
-// app.use(cors());
+app.use(cors());
 
 //Route
 const projectRoutes = require("./routes/project-routes");
@@ -74,6 +74,7 @@ io.on("connection", (socket) => {
     users.splice(indexOfUser, 1);
     socket.broadcast.emit("user left", {
       usernameOfPersonLeaving: username,
+      usersLeft: users,
     });
   });
 

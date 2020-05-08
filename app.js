@@ -86,7 +86,7 @@ io.on("connection", (socket) => {
 });
 // Socket Config
 
-server.listen(process.env.PORT || 8080, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Listening on http://localhost:${process.env.PORT}`);
 });
 

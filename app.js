@@ -6,11 +6,12 @@ const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const http = require("http");
-// const socketIo = require("socket.io"); WEBSOCKET
+const socketIo = require("socket.io");
 
 const server = http.createServer(app);
+const io = require("socket.io")(server);
 
-// const Message = require("./models/message-schema"); WEBSOCKET
+const Message = require("./models/message-schema");
 
 // DB Setup
 mongoose.Promise = Promise;
@@ -45,33 +46,45 @@ const messageRoutes = require("./routes/message-routes");
 app.use("/message", messageRoutes);
 //Route
 
-// const io = socketIo(server); WEBSOCKET
+let users = [];
+let messages = [];
 
-// let interval;WEBSOCKET
+// SOcket Config
+io.on("connection", (socket) => {
+  console.log("New client connected");
 
-// io.on("connection", (socket) => {
-//   console.log("New client connected");
-//   if (interval) {
-//     clearInterval(interval);
-//   }
-//   interval = setInterval(() => getApiAndEmit(socket), 1000);
-//   socket.on("disconnect", () => {
-//     console.log("Client disconnected");
-//     clearInterval(interval);
-//   });
-// });  WEBSOCKET
+  socket.on("add user", (username) => {
+    users.push(username);
+    socket.broadcast.emit("user joined", {
+      username: username,
+      numUsers: users.length,
+      allUsers: users,
+    });
+  });
 
-// let getApiAndEmit = (socket) => {
-//   console.log("SOCKET", socket);
-//   // Emitting a new message. Will be consumed by the client
-//   Message.find()
-//     .then((messages) => {
-//       socket.emit("FromAPI", messages);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// }; WEBSOCKET
+  socket.on("add message", ({ username, message }) => {
+    messages.push({ username, message, _id: messages.length });
+    socket.broadcast.emit("new message", {
+      messages,
+    });
+  });
+
+  socket.on("delete user", (username) => {
+    let indexOfUser = users.indexOf(username);
+    users.splice(indexOfUser, 1);
+    socket.broadcast.emit("user left", {
+      usernameOfPersonLeaving: username,
+    });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+    if (users.length == 0) {
+      messages = [];
+    }
+  });
+});
+// Socket Config
 
 server.listen(process.env.PORT || 8080, () => {
   console.log(`Listening on http://localhost:${process.env.PORT}`);

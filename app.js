@@ -72,6 +72,9 @@ io.on("connection", (socket) => {
   socket.on("delete user", (username) => {
     let indexOfUser = users.indexOf(username);
     users.splice(indexOfUser, 1);
+    if (users.length == 0) {
+      messages = [];
+    }
     socket.broadcast.emit("user left", {
       usernameOfPersonLeaving: username,
       usersLeft: users,
@@ -80,9 +83,6 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("Client disconnected");
-    if (users.length == 0) {
-      messages = [];
-    }
   });
 });
 // Socket Config

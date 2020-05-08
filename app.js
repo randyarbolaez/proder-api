@@ -37,7 +37,7 @@ app.use(
   })
 );
 
-app.use(cors());
+// app.use(cors());
 
 //Route
 const projectRoutes = require("./routes/project-routes");
